@@ -173,7 +173,7 @@ def getPosNegLongPhrases(df_reviews, topk=10):
                 worst_terms_list.append(neg_first_df['text'].iloc[0])#prevent duplicates
         except IndexError as e:
             pass
-    del [df]
+    del [df, new_df, neg_first_df, pos_first_df]
     negative_list = []
     for i in reversed(range(math.ceil(x/2), x)):
         for list_of_words in worst_terms_list:
