@@ -73,6 +73,25 @@ def getPosNegLongPhrases(df_reviews, topk=10):
 
     for key in replace_dict_phrase_count.keys():
         df['only_alphabets'] = df['only_alphabets'].str.lower()
+
+    stopwords = ['maybe','from','first','here','only','put','where','got','sure', 'their', 'us',
+    'definitely','food','yet','our','go','since','really','very','two',"don t",'with','if',"hers",'which',
+    'came','all','me','makes','make','were','immediately','get','been','ahead','also','that', 'were',
+    'one','have','see','what','to','we','had','the',"re",'it','or','he','she','we','us','how','went',
+    'no','of','has','by','bit','thing','place','so','ok','and','they','none','was','you',"ve", 'was',
+    'did','be','and','but','is','as','you','has','and','had','was','him','so','my','did', 'our', 'there',
+    'would','her','him','it','is','by','bit','thing','place','while','check in', 'they', 'them', 
+    'want', 'good','husband', 'want','love','something','your','they','your','cuz','him',"i ll",'her',
+    'told', 'check', 'im', "his",'they', 'this','it s','they','this',"won t",'the', 'it', 'i ve'
+     ]
+    def filter_stopwords(text):
+        for i in str(text):
+            if i not in stopwords:
+                return str(text)
+
+    # if item in stopwords list partially matches, delete, single letters like 'i' would be deleted 
+    # from inside individual words if in list
+    df = df[~df['only_alphabets'].isin(stopwords)]
     # if the following words fully matches, filter out
     try: 
         corpus = st.CorpusFromPandas(df,
