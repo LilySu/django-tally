@@ -71,9 +71,7 @@ def getPosNegLongPhrases(df_reviews, topk=10):
     df = df.dropna()
     df['only_alphabets'] = df['text'].apply(lambda x: ' '.join(re.findall("[a-zA-Z]+", x)))
 
-    replace_dict_phrase_count = {'[':'',']':'','-':'','!':'','.':'',"'":''}
     for key in replace_dict_phrase_count.keys():
-        df['only_alphabets'] = df['only_alphabets'].str.replace(key, replace_dict_phrase_count[key])
         df['only_alphabets'] = df['only_alphabets'].str.lower()
 
     stopwords = ['"','+','@','&','*','\\',')','(','\(','\xa0','0','1','2','3','4','5','6','7','8',
@@ -96,8 +94,6 @@ def getPosNegLongPhrases(df_reviews, topk=10):
     # from inside individual words if in list
     df = df[~df['only_alphabets'].isin(stopwords)]
     # if the following words fully matches, filter out
-    full_match_list = ['i','a','an','am','at','are','in','on','for','','\xa0\xa0','\xa0','\(']
-    df = df[~df['only_alphabets'].isin(full_match_list)]
     try: 
         corpus = st.CorpusFromPandas(df,
                                     category_col='stars',
@@ -173,7 +169,7 @@ def getPosNegLongPhrases(df_reviews, topk=10):
                 worst_terms_list.append(neg_first_df['text'].iloc[0])#prevent duplicates
         except IndexError as e:
             pass
-    del [df]
+    del [df, new_df, neg_first_df, pos_first_df]
     negative_list = []
     for i in reversed(range(math.ceil(x/2), x)):
         for list_of_words in worst_terms_list:
