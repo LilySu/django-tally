@@ -74,17 +74,16 @@ def getPosNegLongPhrases(df_reviews, topk=10):
     for key in replace_dict_phrase_count.keys():
         df['only_alphabets'] = df['only_alphabets'].str.lower()
 
-    stopwords = ['"','+','@','&','*','\\',')','(','\(','\xa0','0','1','2','3','4','5','6','7','8',
-    '9','/','$',"'d","'ll","'m",'+','maybe','from','first','here','only','put','where','got','sure',
-    'definitely','food','yet','our','go','since','really','very','two',"n't",'with','if',"'s",'which',
-    'came','all','me','(',')','makes','make','were','immediately','get','been','ahead','also','that',
-    'one','have','see','what','to','we','had','.',"'re",'it','or','he','she','we','us','how','went',
-    'no','"','of','has','by','bit','thing','place','so','ok','and','they','none','was','you',"'ve",
-    'did','be','and','but','is','as','&','you','has','-',':','and','had','was','him','so','my','did',
-    'would','her','him','it','is','by','bit','thing','place','[',']','while','check-in','=','= =',
-    'want', 'good','husband', 'want','love','something','your','they','your','cuz','him',"i've",'her',
-    'told', 'check', 'i"m', "it's",'they', 'this','its','they','this',"don't",'the',',', 'it', 'i"ve',
-     'i"m', '!', '1','2','3','4', '5','6','7','8','9','0','/','.']
+    stopwords = ['maybe','from','first','here','only','put','where','got','sure',
+    'definitely','food','yet','our','go','since','really','very','two',"don t",'with','if',"'s",'which',
+    'came','all','me','makes','make','were','immediately','get','been','ahead','also','that',
+    'one','have','see','what','to','we','had','.',"re",'it','or','he','she','we','us','how','went',
+    'no','of','has','by','bit','thing','place','so','ok','and','they','none','was','you',"'ve",
+    'did','be','and','but','is','as','you','has','and','had','was','him','so','my','did',
+    'would','her','him','it','is','by','bit','thing','place','while','check in',
+    'want', 'good','husband', 'want','love','something','your','they','your','cuz','him',"i ll",'her',
+    'told', 'check', 'im', "it's",'they', 'this','it s','they','this',"won t",'the', 'it', 'i ve'
+     ]
     def filter_stopwords(text):
         for i in str(text):
             if i not in stopwords:
