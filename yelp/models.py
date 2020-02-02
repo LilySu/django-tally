@@ -10,7 +10,7 @@ from django.db import models
 import uuid
 
 
-class YelpBusiness(models.Model):
+class Business(models.Model):
     business_id = models.CharField(primary_key=True, max_length=100)
     alias = models.CharField(max_length=100, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -35,7 +35,29 @@ class YelpBusiness(models.Model):
         
     class Meta:
         managed = False # Table has already been created in database.
-        db_table = 'yelp_business'
+        db_table = 'business'
+
+
+class Review(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    review_id = models.CharField(max_length=100, blank=True, null=True)
+    business_id = models.CharField(max_length=100, blank=True, null=True)
+    user_id = models.CharField(max_length=100, blank=True, null=True)
+    stars = models.FloatField(blank=True, null=True)
+    datetime = models.DateTimeField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    time = models.TimeField(blank=True, null=True)
+    text = models.CharField(max_length=5000, blank=True, null=True)
+    timestamp = models.DateTimeField(blank=True, null=True)
+    data_source = models.SmallIntegerField(blank=True, null=True)
+
+    def __str__(self):
+        """Return a human readable representation of the model instance."""
+        return "{}".format(self.uuid)
+
+    class Meta:
+        managed = False
+        db_table = 'review'
 
 
 class YelpReview(models.Model):
@@ -88,3 +110,21 @@ class DsVizstatus(models.Model):
         managed = False
         db_table = 'ds_vizstatus'
         unique_together = (('business_id', 'viztype'),)
+
+
+'''for unit testing only
+   when this table hasn't been created in schema "tallyweb"
+   Tallyuser-Business relationship n:n'''
+class TallyuserBusiness(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tallyuser_id = models.CharField(max_length=100, blank=True, null=True)
+    business_id = models.CharField(max_length=100, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a human readable representation of the model instance."""
+        return f"【Tally User ID】{self.tallyuser_id},【Business ID】{self.business_id}"
+
+    class Meta:
+        managed = False
+        db_table = 'tallyuser_business'

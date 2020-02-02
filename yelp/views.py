@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from tallylib.textrank import yelpTrendyPhrases
 from tallylib.scattertxt import getDataViztype0
 from tallylib.statistics import yelpReviewCountMonthly
+<<<<<<< HEAD
 from tallylib.sentiment import yelpReviewSentiment
 from tallylib.sql import deleteVizdata
 from tallylib.sql import getLatestVizdata
@@ -24,12 +25,15 @@ from tasks.tasks import task_yelpScraper
 def hello(request):
     result = "Hello, you are at the Tally Yelp Analytics home page."
     return HttpResponse(result)
+=======
+from .models import YelpReview                # for data maintenance
+from .serializers import YelpReviewSerializer # for data maintenance
+>>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
 
 
 # Query strings -> Main analytics
-# 2020-01-22 Here return codes and messages could be added 
-#     to make the APIs more user friendly.
 def home(request, business_id):
+<<<<<<< HEAD
     '''get data for views (APIs)'''
     returncode, result = 0, ""
     try: 
@@ -85,3 +89,41 @@ def home(request, business_id):
 
     return HttpResponse(result)
 
+=======
+    viztype = request.GET.get('viztype')
+    if viztype == '1':
+        result = json.dumps(yelpTrendyPhrases(business_id), 
+                            sort_keys=False)
+    elif viztype == '2':
+        result = json.dumps(yelpReviewCountMonthly(business_id), 
+                            sort_keys=False)
+    else: # viztype0 and viztype3
+        result = json.dumps(getDataViztype0(business_id),
+                            sort_keys=False)
+    return HttpResponse(result)
+
+
+# Nothing here
+def hello(request):
+    result = "Hello, you are at the Tally Yelp Analytics home page."
+    return HttpResponse(result)
+
+
+# example
+class YelpReviewCreateView(generics.ListCreateAPIView):
+    """This class defines the create behavior of our rest api."""
+    queryset = YelpReview.objects.all()
+    serializer_class = YelpReviewSerializer
+
+    def perform_create(self, serializer):
+        """Save the post data when creating a new bucketlist."""
+        serializer.save()
+
+
+# example
+class YelpReviewDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    """This class handles the http GET, PUT and DELETE requests."""
+    queryset = YelpReview.objects.all()
+    serializer_class = YelpReviewSerializer
+
+>>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
