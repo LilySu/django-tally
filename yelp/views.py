@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from tallylib.textrank import yelpTrendyPhrases
 from tallylib.scattertxt import getDataViztype0
 from tallylib.statistics import yelpReviewCountMonthly
-<<<<<<< HEAD
+
 from tallylib.sentiment import yelpReviewSentiment
 from tallylib.sql import deleteVizdata
 from tallylib.sql import getLatestVizdata
@@ -28,12 +28,12 @@ def hello(request):
 =======
 from .models import YelpReview                # for data maintenance
 from .serializers import YelpReviewSerializer # for data maintenance
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
+
 
 
 # Query strings -> Main analytics
 def home(request, business_id):
-<<<<<<< HEAD
+
     '''get data for views (APIs)'''
     returncode, result = 0, ""
     try: 
@@ -126,4 +126,3 @@ class YelpReviewDetailsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = YelpReview.objects.all()
     serializer_class = YelpReviewSerializer
 
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
