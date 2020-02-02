@@ -9,7 +9,7 @@ from datetime import datetime
 import time
 import random
 ## Local imports
-from tallylib.proxy import proxylist
+# from tallylib.proxy import proxylist
 from tallylib.locks import lock_yelpscraper
 
 
@@ -17,101 +17,101 @@ from tallylib.locks import lock_yelpscraper
 # Yelp Scraping
 ###########################################################################################
 # 2020-01-17 Added review_id, user_id
-def yelpScrapePage(business_id, 
-                   page=0, # page
-                   date_range=None # date range
-                   ): 
-    ''' 
-    This function will scrape one Yelp page.
-    CAUTION: Do NOT use multi-threading to avoid getting blocked.
-    '''
-    status_code, results, total_pages, keep_scraping = None, [], 0, True
+# def yelpScrapePage(business_id, 
+#                    page=0, # page
+#                    date_range=None # date range
+#                    ): 
+#     ''' 
+#     This function will scrape one Yelp page.
+#     CAUTION: Do NOT use multi-threading to avoid getting blocked.
+#     '''
+#     status_code, results, total_pages, keep_scraping = None, [], 0, True
 
-    base_url = "https://www.yelp.com/biz/" # add business id
-    api_url = "/review_feed?sort_by=date_desc&start=" # add number
-    url = base_url + business_id + api_url + str(page*20)
+#     base_url = "https://www.yelp.com/biz/" # add business id
+#     api_url = "/review_feed?sort_by=date_desc&start=" # add number
+#     url = base_url + business_id + api_url + str(page*20)
 
-    with Session() as s:
-        for i in range(1000): # try many times until find a working proxy
-            proxy = proxylist.getProxy() # get a new proxy IP
-            try:
-                with s.get(url, timeout=5, proxies=proxy) as r:
-                    status_code = r.status_code
-                    if status_code == 200:
-                        response = r.json()
-                        break
-                    elif status_code == 503: # Proxy IP got blocked
-                        # proxylist.removeProxy()
-                        print(f"{i} status code {status_code}")
-                    else:
-                        print(f"{i} status code {status_code}")
-            except Exception as e:
-                # proxylist.removeProxy()
-                print(i, e)
-                continue
+#     with Session() as s:
+#         for i in range(1000): # try many times until find a working proxy
+#             proxy = proxylist.getProxy() # get a new proxy IP
+#             try:
+#                 with s.get(url, timeout=5, proxies=proxy) as r:
+#                     status_code = r.status_code
+#                     if status_code == 200:
+#                         response = r.json()
+#                         break
+#                     elif status_code == 503: # Proxy IP got blocked
+#                         # proxylist.removeProxy()
+#                         print(f"{i} status code {status_code}")
+#                     else:
+#                         print(f"{i} status code {status_code}")
+#             except Exception as e:
+#                 # proxylist.removeProxy()
+#                 print(i, e)
+#                 continue
 
-        if status_code != 200:
-            return status_code, [], 0, False
+#         if status_code != 200:
+#             return status_code, [], 0, False
 
-        # get total pages 
-        _html = html.fromstring(response['pagination'])
-        text = _html.xpath("//div[@class='page-of-pages arrange_unit arrange_unit--fill']/text()")
-        try:
-            total_pages = int(text[0].strip().split(' ')[-1])
-        except:
-            total_pages = 0
-        if page+1 >= total_pages:
-            keep_scraping = False
-        if page+1 > total_pages or total_pages == 0:
-            return status_code, results, total_pages, keep_scraping
+#         # get total pages 
+#         _html = html.fromstring(response['pagination'])
+#         text = _html.xpath("//div[@class='page-of-pages arrange_unit arrange_unit--fill']/text()")
+#         try:
+#             total_pages = int(text[0].strip().split(' ')[-1])
+#         except:
+#             total_pages = 0
+#         if page+1 >= total_pages:
+#             keep_scraping = False
+#         if page+1 > total_pages or total_pages == 0:
+#             return status_code, results, total_pages, keep_scraping
 
-        # get content
-        _html = html.fromstring(response['review_list'])
-        dates, stars, texts, review_ids, user_ids = [], [], [], [], []
-        dates = _html.xpath("//div[@class='review-content']/descendant::span[@class='rating-qualifier']/text()")
-        '''
-        Remove this line you will get "ValueError: time data '' does not match format '%m/%d/%Y'".
-        Some reviews have been linked with preview reviews left by the same user.
-        Those extra dates somehow would be scraped as blank values. Hence we would need to remove them.
-        e.g. https://www.yelp.com/biz/coconut-hut-gilbert?sort_by=date_desc
-        '''
-        dates = [d.strip() for d in dates if d.strip() != '']
-        dates = [datetime.strptime(d.strip(), format("%m/%d/%Y")) for d in dates]
-        stars = _html.xpath("//div[@class='review-content']/descendant::div[@class='biz-rating__stars']/div/@title")
-        stars = [float(s.split(' ')[0]) for s in stars]
-        texts = [e.text for e in _html.xpath("//div[@class='review-content']/p")]
-        review_ids = _html.xpath("//div[@class='review review--with-sidebar']/@data-review-id")
-        user_ids = [s.split(':')[1] for s in _html.xpath("//div[@class='review review--with-sidebar']/@data-signup-object")]
-        results = [[date, star, text, review_id, user_id] 
-                    for date, star, text, review_id, user_id 
-                    in zip(dates, stars, texts, review_ids, user_ids)]
+#         # get content
+#         _html = html.fromstring(response['review_list'])
+#         dates, stars, texts, review_ids, user_ids = [], [], [], [], []
+#         dates = _html.xpath("//div[@class='review-content']/descendant::span[@class='rating-qualifier']/text()")
+#         '''
+#         Remove this line you will get "ValueError: time data '' does not match format '%m/%d/%Y'".
+#         Some reviews have been linked with preview reviews left by the same user.
+#         Those extra dates somehow would be scraped as blank values. Hence we would need to remove them.
+#         e.g. https://www.yelp.com/biz/coconut-hut-gilbert?sort_by=date_desc
+#         '''
+#         dates = [d.strip() for d in dates if d.strip() != '']
+#         dates = [datetime.strptime(d.strip(), format("%m/%d/%Y")) for d in dates]
+#         stars = _html.xpath("//div[@class='review-content']/descendant::div[@class='biz-rating__stars']/div/@title")
+#         stars = [float(s.split(' ')[0]) for s in stars]
+#         texts = [e.text for e in _html.xpath("//div[@class='review-content']/p")]
+#         review_ids = _html.xpath("//div[@class='review review--with-sidebar']/@data-review-id")
+#         user_ids = [s.split(':')[1] for s in _html.xpath("//div[@class='review review--with-sidebar']/@data-signup-object")]
+#         results = [[date, star, text, review_id, user_id] 
+#                     for date, star, text, review_id, user_id 
+#                     in zip(dates, stars, texts, review_ids, user_ids)]
 
-        # filter by date
-        try: 
-            if date_range is not None:
-                idx0, idx1 = None, None
-                for i in range(len(dates)):
-                    if dates[i] <= date_range[1]:
-                        idx0 = i
-                        break
-                for i in range(len(dates)):
-                    if dates[len(dates)-1-i] >= date_range[0]:
-                        idx1 = len(dates)-1-i
-                        break
+#         # filter by date
+#         try: 
+#             if date_range is not None:
+#                 idx0, idx1 = None, None
+#                 for i in range(len(dates)):
+#                     if dates[i] <= date_range[1]:
+#                         idx0 = i
+#                         break
+#                 for i in range(len(dates)):
+#                     if dates[len(dates)-1-i] >= date_range[0]:
+#                         idx1 = len(dates)-1-i
+#                         break
 
-                if idx0 is None or idx1 is None or idx1 < idx0: 
-                    results = []
-                else:
-                    results = results[idx0:idx1+1]
+#                 if idx0 is None or idx1 is None or idx1 < idx0: 
+#                     results = []
+#                 else:
+#                     results = results[idx0:idx1+1]
 
-                if idx1 is None or idx1 < len(dates):
-                    keep_scraping = False
+#                 if idx1 is None or idx1 < len(dates):
+#                     keep_scraping = False
 
-        except Exception as e:
-            print(e)
-            return status_code, [], total_pages, False
+#         except Exception as e:
+#             print(e)
+#             return status_code, [], total_pages, False
 
-    return status_code, results, total_pages, keep_scraping
+#     return status_code, results, total_pages, keep_scraping
 
 
 def yelpScraper(business_id,

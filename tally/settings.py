@@ -19,8 +19,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-if 'DJANGO_SECRET_KEY' in os.environ:
-    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+# if 'DJANGO_SECRET_KEY' in os.environ:
+#     SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+
+SECRET_KEY = '8=(-_-7slnn_ul6v#uokp!qxa%l!=#te!f(3j_5k5(deia*jk1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if 'DJANGO_DEBUG' in os.environ:
@@ -90,24 +92,42 @@ WSGI_APPLICATION = 'tally.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-if 'RDS_HOSTNAME' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
-            'OPTIONS': {
-                'options': '-c search_path=django,tallyds,public'
-            },
-            'TEST': {
-                'NAME': 'test_tally', # test database name
-                'NAME': os.environ['RDS_DB_NAME'], # use the same database for testing
-            },
+# if 'RDS_HOSTNAME' in os.environ:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': os.environ['RDS_DB_NAME'],
+#             'USER': os.environ['RDS_USERNAME'],
+#             'PASSWORD': os.environ['RDS_PASSWORD'],
+#             'HOST': os.environ['RDS_HOSTNAME'],
+#             'PORT': os.environ['RDS_PORT'],
+#             'OPTIONS': {
+#                 'options': '-c search_path=django,tallyds,public'
+#             },
+#             'TEST': {
+#                 'NAME': 'test_tally', # test database name
+#                 'NAME': os.environ['RDS_DB_NAME'], # use the same database for testing
+#             },
+#         },
+#     }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'tally_ds',
+        'PASSWORD': 'P@ssw0rd',
+        'HOST': 'database-spotifier.c5eevkz7wazj.us-east-2.rds.amazonaws.com',
+        'PORT': '5432',
+        'OPTIONS': {
+                        'options': '-c search_path=django,tallyds'
+                    },        
+        'TEST': {
+            # 'NAME': 'test', # test database name
+            'ENGINE': 'django.db.backends.sqlite3',
         },
-    }
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -191,7 +211,7 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
 
 
 # Proxy IP list URL
-if 'URL_PROXY_LIST' in os.environ:
-    URL_PROXY_LIST=os.environ['URL_PROXY_LIST']
-if 'URL_YELP_API_KEYS' in os.environ:
-    URL_YELP_API_KEYS=os.environ['URL_YELP_API_KEYS']
+#if 'URL_PROXY_LIST' in os.environ:
+#    URL_PROXY_LIST=os.environ['URL_PROXY_LIST']
+#if 'URL_YELP_API_KEYS' in os.environ:
+#    URL_YELP_API_KEYS=os.environ['URL_YELP_API_KEYS']
