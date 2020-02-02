@@ -9,7 +9,7 @@ from django_apscheduler.jobstores import register_events
 from django_apscheduler.jobstores import register_job
 # local imports
 from tallylib.sql import getJobConfig
-from tasks.tasks import task_yelpScraper
+# from tasks.tasks import task_yelpScraper
 from tasks.tasks import task_getVizdata
 
 
@@ -42,18 +42,19 @@ def scheduleJobs():
 
     try:
         for job_id, _, job_rate, _ in job_configs:
-            if job_id == 'task_yelpScraper' and job_rate > 0:
-                scheduler.add_job(
-                    task_yelpScraper,
-                    'interval',
-                    days=job_rate,
-                    jitter=43200, # 43,200 sec = 12 hours
-                    id='task_yelpScraper',
-                    max_instances=1,
-                    replace_existing=True,
-                    misfire_grace_time=100)
+            # if job_id == 'task_yelpScraper' and job_rate > 0:
+            #     scheduler.add_job(
+            #         task_yelpScraper,
+            #         'interval',
+            #         days=job_rate,
+            #         jitter=43200, # 43,200 sec = 12 hours
+            #         id='task_yelpScraper',
+            #         max_instances=1,
+            #         replace_existing=True,
+            #         misfire_grace_time=100)
                     
-            elif job_id == "task_getVizdata" and job_rate > 0:
+            # elif job_id == "task_getVizdata" and job_rate > 0:
+            if job_id == "task_getVizdata" and job_rate > 0:
                 scheduler.add_job(
                     task_getVizdata,
                     'interval',

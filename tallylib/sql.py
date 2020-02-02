@@ -1,6 +1,7 @@
 # tallylib/sql.py
 import time
 from datetime import datetime
+from datetime import timedelta
 from django.db import connection
 # Local
 from yelp.models import Review
@@ -12,12 +13,9 @@ from yelp.models import Review
 '''
 
 
-<<<<<<< HEAD
 ###############################################################
 # tallyds.yelp_review
 ###############################################################
-=======
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
 # Query with Django data models
 def getReviews(business_id, 
                starting_date, 
@@ -81,7 +79,6 @@ def getLatestReviews(business_id,
         # return a list of tuples
         return cursor.fetchall()
 
-<<<<<<< HEAD
 
 def updateYelpReviews(business_id, data):
     # data columns: datetime, star, text, review_id, user_id
@@ -140,11 +137,9 @@ DO NOTHING;
 ###############################################################
 # tallyds.yelp_reivew_log
 ###############################################################
-def getLatestYelpReviewLog(business_id):
-=======
+
 def getLatestYelpReviews(business_id, 
                      limit=1):
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
     sql = f'''
     SELECT date, 
            text,
@@ -205,7 +200,6 @@ def insertJobLogs(business_id,
     return 0 # returncode success
 
 
-<<<<<<< HEAD
 def getFailedJobLogs(job_type=0, # 0: triggered by task or job, 1: triggered by end users
                      timestamp=datetime.now().strftime('%Y-%m-%d')):
     sql = f"""
@@ -222,6 +216,43 @@ def getFailedJobLogs(job_type=0, # 0: triggered by task or job, 1: triggered by 
     except Exception as e:
         print(str(e))
         return []
+
+
+def getLatestYelpReviewLog(business_id):
+    sql = f'''
+    SELECT datetime
+    FROM tallyds.yelp_review_log
+    WHERE business_id = '{business_id}'
+    ORDER BY datetime DESC
+    LIMIT 1;
+    '''
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        # return a list of tuples
+        return cursor.fetchall()
+
+
+def insertYelpReviewLog(business_id,
+                        date):
+    sql = f"""
+    INSERT INTO tallyds.yelp_review_log VALUES
+    (
+        '{business_id}',
+        '{date.strftime('%Y-%m-%d')}',
+        CURRENT_TIMESTAMP
+    )
+    ON CONFLICT ON CONSTRAINT yelp_review_log_pkey
+    DO UPDATE SET
+        datetime = excluded.datetime,
+        timestamp = excluded.timestamp
+    ;
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+    except Exception as e:
+        print(e)
+
 
 
 ###############################################################
@@ -288,12 +319,10 @@ def insertTallyBusiness(business_ids):
     except Exception as e:
         print(e)
         return 1 # error
-=======
 def updateYelpReviews(business_id, data):
     # data columns: datetime, star, text, review_id, user_id
     if len(data)==0:
         return 0 # returncode success
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
 
     s1 = "INSERT INTO tallyds.yelp_review VALUES "
     s2 = ""
@@ -313,7 +342,6 @@ def updateYelpReviews(business_id, data):
 '{d_text}', \
 '{d_now}'),"""
 
-<<<<<<< HEAD
 ###############################################################
 # tallyds.ds_vizdata
 ###############################################################
@@ -398,7 +426,6 @@ def deleteVizdata(business_id):
     except Exception as e:
         print(e)
         return 1 # failure
-=======
 #     s3 = '''
 # ON CONFLICT ON CONSTRAINT yelp_review_pkey
 # DO UPDATE SET
@@ -422,7 +449,6 @@ DO NOTHING;
     except:
         return 1 # returncode 1 = failure
     return 0 # returncode 0 = success
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
 
 
 def getTallyuserBusiness():
@@ -430,7 +456,6 @@ def getTallyuserBusiness():
     SELECT DISTINCT business_id
     FROM tallyds.tallyuser_business;
     '''
-<<<<<<< HEAD
     try:
         with connection.cursor() as cursor:
             cursor.execute(sql) 
@@ -486,9 +511,32 @@ def getYelpBusinessIDs(location='Phoenix',
     except Exception as e:
         print(e)
         return []
-=======
     with connection.cursor() as cursor:
         cursor.execute(sql)
         # return a list of strings
         return [r[0] for r in cursor.fetchall()]
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
+
+
+###############################################################
+# tallyds.ds_vizdata_log
+###############################################################
+def insertVizdataLog(business_id,
+                     viztype,
+                     triggeredby):
+    sql=f'''
+    INSERT INTO tallyds.ds_vizdata_log
+    VALUES (
+        uuid_generate_v4(),
+        '{business_id}',
+        {viztype},
+        '{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}',
+        {triggeredby}
+    );
+    '''
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql) 
+            return 0 # success
+    except Exception as e:
+        print(e)
+        return 1 # failure

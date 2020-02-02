@@ -3,6 +3,8 @@ import json
 import time
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework import generics
+
 # Local imports
 from tallylib.textrank import yelpTrendyPhrases
 from tallylib.scattertxt import getDataViztype0
@@ -16,7 +18,11 @@ from tallylib.sql import insertVizdataLog
 from tallylib.sql import isTallyBusiness
 from tallylib.sql import insertTallyBusiness
 from tallylib.locks import lock_yelpscraper
-from tasks.tasks import task_yelpScraper
+# from tasks.tasks import task_yelpScraper
+
+from .models import YelpReview                # for data maintenance
+from .serializers import YelpReviewSerializer # for data maintenance
+
 
 
 # Create your views here.
@@ -25,7 +31,7 @@ from tasks.tasks import task_yelpScraper
 def hello(request):
     result = "Hello, you are at the Tally Yelp Analytics home page."
     return HttpResponse(result)
-=======
+
 from .models import YelpReview                # for data maintenance
 from .serializers import YelpReviewSerializer # for data maintenance
 
@@ -41,16 +47,16 @@ def home(request, business_id):
         # check whether some other session(s) is scraping the same business ID
         if not isTallyBusiness(business_id) and not lock_yelpscraper.isLocked(business_id):
             deleteVizdata(business_id)
-            task_yelpScraper([business_id], job_type=1) # triggered by end user
+            # task_yelpScraper([business_id], job_type=1) # triggered by end user
             insertTallyBusiness([business_id])
 
-        for i in range(1200):
-            if lock_yelpscraper.isLocked(business_id):
-                time.sleep(1)
-                if i % 30 == 0:
-                    print("Waiting for some other session(s) finishing web scraping...")
-            else:
-                break
+        # for i in range(1200):
+        #     if lock_yelpscraper.isLocked(business_id):
+        #         time.sleep(1)
+        #         if i % 30 == 0:
+        #             print("Waiting for some other session(s) finishing web scraping...")
+        #     else:
+        #         break
 
         viztype = request.GET.get('viztype')
         viztype = int(viztype)
@@ -89,7 +95,7 @@ def home(request, business_id):
 
     return HttpResponse(result)
 
-=======
+
     viztype = request.GET.get('viztype')
     if viztype == '1':
         result = json.dumps(yelpTrendyPhrases(business_id), 

@@ -7,7 +7,7 @@ import json
 # from tallylib.yelpapis import getYelpBusinessesViaAPI
 from tallylib.sql import getYelpBusinessIDs
 from tallylib.sql import getFailedJobLogs
-from tasks.tasks import task_yelpScraper
+# from tasks.tasks import task_yelpScraper
 from tasks.tasks import task_getVizdata
 
 
@@ -47,17 +47,17 @@ from tasks.tasks import task_getVizdata
 #         return HttpResponse(e)
 
 
-# def viewGetVizdata(request):
-#     result = ""
-#     try:
-#         location = request.GET.get('location') # e.g. New York or Phoenix
-#         categories = request.GET.get('categories') # e.g. cafe,coffee
-#         business_ids = []
-#         business_ids = getYelpBusinessIDs(location=location, categories=categories)
-#         task_getVizdata(business_ids)
-#         result = f"You have generated visualization data for {len(business_ids)} \
-# businesses in location '{location}' with categories '{categories}'."
-#         return HttpResponse(result)
-#     except Exception as e:
-#         print(e)
-#         return HttpResponse(e)
+def viewGetVizdata(request):
+    result = ""
+    try:
+        location = request.GET.get('location') # e.g. New York or Phoenix
+        categories = request.GET.get('categories') # e.g. cafe,coffee
+        business_ids = []
+        business_ids = getYelpBusinessIDs(location=location, categories=categories)
+        task_getVizdata(business_ids)
+        result = f"You have generated visualization data for {len(business_ids)} \
+businesses in location '{location}' with categories '{categories}'."
+        return HttpResponse(result)
+    except Exception as e:
+        print(e)
+        return HttpResponse(e)

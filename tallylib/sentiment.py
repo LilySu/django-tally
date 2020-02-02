@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-# tallylib/sentiment.py
-import json
-
-
-def yelpReviewSentiment(business_id):
-    result = '''\
-[
-    {"subject":"Subject 1", "data1":45, "data2":70, "maxValue":150},
-    {"subject":"Subject 2", "data1":75, "data2":95, "maxValue":150},
-    {"subject":"Subject 3", "data1":20, "data2":50, "maxValue":150},
-    {"subject":"Subject 4", "data1":65, "data2":85, "maxValue":150},
-    {"subject":"Subject 5", "data1":35, "data2":45, "maxValue":150}
-]
-'''
-
-    return json.loads(result)
-=======
 # tallylib/sentiment.py
 
 import re
@@ -138,6 +120,8 @@ def yelpReviewSentiment(business_id):
 	ambience_review_list = df[df['words_related_to_ambience'].map(len) > 1]['text'].tolist()
 	experience_review_list = df[df['words_related_to_experience'].map(len) > 1]['text'].tolist()
 
+	del df
+
 	def sentiment_score(sentence):
 		# Create a SentimentIntensityAnalyzer object. 
 		sid_obj = SentimentIntensityAnalyzer()
@@ -200,6 +184,7 @@ def yelpReviewSentiment(business_id):
 
 	food_sentiment_score, service_sentiment_score, speed_sentiment_score, price_sentiment_score, ambience_sentiment_score, experience_sentiment_score = get_scores()
 	
+	del [food_review_list, service_review_list, speed_review_list, price_review_list, ambience_review_list, experience_review_list]
 	result = json.dumps([
         { 'subject': 'Food', 'data1': food_sentiment_score, 'data2': 0, 'maxValue': 150 },
         { 'subject': 'Service', 'data1': service_sentiment_score, 'data2': 0, 'maxValue': 150 },
@@ -208,16 +193,7 @@ def yelpReviewSentiment(business_id):
         { 'subject': 'Ambience', 'data1': ambience_sentiment_score, 'data2': 0, 'maxValue': 150},
         { 'subject': 'Experience', 'data1': experience_sentiment_score, 'data2': 0, 'maxValue': 150}
 	])
-#     result = '''\
-# [
-#     {"subject":"Subject 1", "data1":45, "data2":70, "maxValue":150},
-#     {"subject":"Subject 2", "data1":75, "data2":95, "maxValue":150},
-#     {"subject":"Subject 3", "data1":20, "data2":50, "maxValue":150},
-#     {"subject":"Subject 4", "data1":65, "data2":85, "maxValue":150},
-#     {"subject":"Subject 5", "data1":35, "data2":45, "maxValue":150}
-# ]
-# '''
 
-	# return json.loads(result)
+	del [food_sentiment_score, service_sentiment_score, speed_sentiment_score, price_sentiment_score, ambience_sentiment_score, experience_sentiment_score]
+
 	return result
->>>>>>> 64b43fc29e334cc1394c9ccd6af8ba0312fe7064
