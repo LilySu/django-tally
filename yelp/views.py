@@ -17,7 +17,7 @@ from tallylib.sql import updateVizdata
 from tallylib.sql import insertVizdataLog
 from tallylib.sql import isTallyBusiness
 from tallylib.sql import insertTallyBusiness
-from tallylib.locks import lock_yelpscraper
+# from tallylib.locks import lock_yelpscraper
 # from tasks.tasks import task_yelpScraper
 
 from .models import YelpReview                # for data maintenance

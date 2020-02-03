@@ -17,17 +17,43 @@ from yelp.models import Review
 # tallyds.yelp_review
 ###############################################################
 # Query with Django data models
+
+# def getReviews(business_id, 
+#                starting_date, 
+#                ending_date):
+#     sql = f'''
+#     SELECT review_id, date, text FROM tallyds.yelp_review
+#     WHERE business_id = '{business_id}'
+#     AND datetime >= '{starting_date}'
+#     AND datetime <= '{ending_date}'
+#     ORDER BY datetime DESC;
+#     '''
+#     return [[record.date, record.text] for record in Review.objects.raw(sql)]
+
+#The above returns error: 'Raw query must include the primary key'
+
+#From January 24, 2020
 def getReviews(business_id, 
                starting_date, 
                ending_date):
     sql = f'''
-    SELECT uuid, date, text FROM tallyds.yelp_review
+    SELECT date, 
+           text 
+    FROM tallyds.yelp_review
     WHERE business_id = '{business_id}'
     AND datetime >= '{starting_date}'
     AND datetime <= '{ending_date}'
     ORDER BY datetime DESC;
     '''
-    return [[record.date, record.text] for record in Review.objects.raw(sql)]
+    # return [[record.date, record.text] 
+    #     for record in AllReview.objects.raw(sql)] # query by Django data model
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            return cursor.fetchall()
+    except Exception as e:
+        print(e)
+
 
 
 # Query without Django data models
